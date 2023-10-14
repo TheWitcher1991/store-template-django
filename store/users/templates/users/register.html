@@ -1,0 +1,47 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+    <main>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-7">
+                        {% if form.errors %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert"
+                             style="margin-top: 50px;">
+                            {{ form.errors }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endif %}
+                        <div class="card shadow-lg border-0 rounded-lg mt-5">
+                            <div class="card-header"><h3 class="text-center font-weight-light my-4">Создать аккаунт</h3>
+                            </div>
+                            <div class="card-body">
+                                <form action="{% url 'users:register' %}" method="POST">
+                                    {% csrf_token %}
+
+                                    {% for field in form %}
+
+                                        <div class="form-group ">
+                                            <label class="small mb-1" for="{{ field.auto_id }}">{{ field.label }}</label>
+                                            {{ field }}
+                                        </div>
+
+                                     {% endfor %}
+
+                                    <div class="form-group mt-4 mb-0">
+                                        <input class="btn btn-primary btn-block" type="submit" value="Создать аккаунт">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer text-center">
+                                <div class="small"><a href="{% url 'users:login' %}">Уже есть аккаунт? Авторизоваться</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+{% endblock %}
+
