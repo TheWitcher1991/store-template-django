@@ -28,10 +28,11 @@ class UserRegisterView(TitleMixin, SuccessMessageMixin, CreateView):
 
 
 # Страница профиль
-class UserProfileView(UpdateView, LoginRequiredMixin):
+class UserProfileView(TitleMixin, UpdateView, LoginRequiredMixin):
     model = User
     form_class = UserProfileForm
     template_name = 'users/profile.html'
+    title = 'Store - Профиль'
 
     def get_success_url(self):
         return reverse_lazy('users:profile', args=(self.object.id,))
