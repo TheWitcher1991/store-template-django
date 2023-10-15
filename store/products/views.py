@@ -1,31 +1,40 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.views.generic import ListView, TemplateView
 
-from products.models import ProductCategory, Product, Basket
-from users.models import User
+from products.models import Basket, Product, ProductCategory
 
 
 # Главная страница
-def index(request):
-    context = {
-        'title': 'Store',
-        'is_promotion': True
-    }
-    return render(request, 'products/index.html', context)
+class IndexView(TemplateView):
+    template_name = 'products/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Store'
+        context['is_promotion'] = True
+        return context
 
 
 # Каталог товаров
-def products(request):
-    context = {
-        'title': 'Store - Каталог',
-        'categories': ProductCategory.objects.all(),
-        'products': Product.objects.all()
-    }
-    return render(request, 'products/products.html', context)
+class ProductsListView(ListView):
+    model = Product
+    template_name = 'products/products.html'
+    paginate_by = 3
+
+    def get_queryset(self):
+        objects = super().get_queryset()
+        category_id = self.kwargs.get('category_id')
+        return objects.filter(category_id=category_id) if category_id else objects
+        # return Product.objects.filter(category_id=self.kwargs.get('category_id'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Store - Каталог'
+        context['categories'] = ProductCategory.objects.all()
+        return context
 
 
-# Добавление в корзину
 @login_required
 def basket_add(request, product_id):
     product = Product.objects.get(id=product_id)
